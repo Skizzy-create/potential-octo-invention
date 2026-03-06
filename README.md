@@ -1,4 +1,6 @@
-# 🚀 Asteroids Game
+# potential-octo-invention
+
+> Nothing what the name says — just the simple classic **ASTEROIDS GAME**. 🚀
 
 > *Because sometimes the only cure for fun... is more fun.*
 
