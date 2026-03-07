@@ -37,6 +37,8 @@ def main():
         # /1000 makes it miliseconds( return value)
         dt = new_Clock.tick(60) / 1000
 
+        Skizzy.update(dt)
+
         # pygame'self. display.flip() method is sued to refersh the screen,
         # this always has to be the last to be called.
         pygame.display.flip()
