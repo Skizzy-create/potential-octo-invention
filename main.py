@@ -5,6 +5,8 @@ from asteroidfield import AsteroidField
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from logger import log_event, log_state
 from player import Player
+from physics import resolve_circle_collision
+from shot import Shot
 
 
 def main():
@@ -19,11 +21,13 @@ def main():
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+    shots = pygame.sprite.Group()
 
     # wire containers
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = updatable
+    Shot.containers = (shots, updatable, drawable)
 
     # create player + asteroids field
     Skizzy = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
@@ -48,11 +52,30 @@ def main():
         # new way
         updatable.update(dt)
 
+        # handle asteroid <-> asteroid collisions
+        asteroid_list = list(asteroids)  # snapshot to avoid concurrency problems
+        n = len(asteroid_list)
+        for i in range(n):
+            a = asteroid_list[i]
+            for j in range(i + 1, n):
+                b = asteroid_list[j]
+                # use the existing method to check overlap
+                if a.collides_with(b):
+                    # restitution can be tuned; slightly inelastic avoids runaway speeds
+                    resolve_circle_collision(a, b, restitution=0.9)
+
         for asteroid in asteroids:
             if Skizzy.collides_with(asteroid):
                 log_event("player_hit")
                 print("Game over!")
                 sys.exit()
+
+        for asteroid in asteroids:
+            for shot in shots:
+                if asteroid.collides_with(shot):
+                    log_event("asteroid_shot")
+                    asteroid.split()
+                    shot.kill()
 
         # draw all objects in drawable Group
         for thing in drawable:
