@@ -217,3 +217,7 @@ wheels/
 # Virtual environments
 .venv
 >>>>>>> b3452da (Initial commit)
+
+game_events.jsonl
+game_state.jsonl
+
